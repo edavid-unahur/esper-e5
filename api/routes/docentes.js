@@ -4,20 +4,20 @@ var models = require("../models");
 
 router.get("/", (req, res,next) => {
 
-  models.materia.findAll({attributes: ["id","nombre","id_carrera"],
+  models.docente.findAll({attributes: ["id","nombre","id_materia"],
       
       /////////se agrega la asociacion 
-      include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}]
+      include:[{as:'Materia-Relacionada', model:models.materia, attributes: ["id","nombre"]}]
       ////////////////////////////////
 
-    }).then(materias => res.send(materias)).catch(error => { return next(error)});
+    }).then(docente => res.send(docente)).catch(error => { return next(error)});
 });
 
 
 router.post("/", (req, res) => {
-  models.materia
-    .create({ nombre: req.body.nombre,id_carrera:req.body.id_carrera })
-    .then(materia => res.status(201).send({ id: materia.id }))
+  models.docente
+    .create({ nombre: req.body.nombre,id_materia:req.body.id_materia })
+    .then(docente => res.status(201).send({ id: docente.id }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
         res.status(400).send('Bad request: existe otra materia con el mismo nombre')
@@ -30,27 +30,27 @@ router.post("/", (req, res) => {
 });
 
 
-const findMateria = (id, { onSuccess, onNotFound, onError }) => {
-  models.materia
+const findDocente = (id, { onSuccess, onNotFound, onError }) => {
+  models.docente
     .findOne({
       attributes: ["id", "nombre"],
       where: { id }
     })
-    .then(materia => (materia ? onSuccess(materia) : onNotFound()))
+    .then(docente => (docente ? onSuccess(docente) : onNotFound()))
     .catch(() => onError());
 };
 
 router.get("/:id", (req, res) => {
-  findMateria(req.params.id, {
-    onSuccess: materia => res.send(materia),
+    findDocente(req.params.id, {
+    onSuccess: docente => res.send(docente),
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
   });
 });
 
 router.put("/:id", (req, res) => {
-  const onSuccess = materia =>
-  materia
+  const onSuccess = docente =>
+  docente
       .update({ nombre: req.body.nombre }, { fields: ["nombre"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
@@ -62,7 +62,7 @@ router.put("/:id", (req, res) => {
           res.sendStatus(500)
         }
       });
-    findMateria(req.params.id, {
+    findDocente(req.params.id, {
     onSuccess,
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
@@ -70,12 +70,12 @@ router.put("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  const onSuccess = materia =>
-    materia
+  const onSuccess = docente =>
+    docente
       .destroy()
       .then(() => res.sendStatus(200))
       .catch(() => res.sendStatus(500));
-  findMateria(req.params.id, {
+    findDocente(req.params.id, {
     onSuccess,
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
