@@ -5,7 +5,8 @@ var models = require("../models");
 router.get("/", (req, res,next) => {
 
   models.docente.findAll({attributes: ["id","nombre","id_materia"],
-      
+      limit: req.query.cantidad ? parseInt(req.query.cantidad) : null,
+      offset: req.query.pagina ? parseInt(req.query.pagina) : null,
       /////////se agrega la asociacion 
       include:[{as:'Materia-Relacionada', model:models.materia, attributes: ["id","nombre"]}]
       ////////////////////////////////

@@ -6,6 +6,8 @@ router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
   models.carrera
     .findAll({
+      limit: req.query.cantidad ? parseInt(req.query.cantidad) : null,
+      offset: req.query.pagina ? parseInt(req.query.pagina) : null,
       attributes: ["id", "nombre"]
     })
     .then(carreras => res.send(carreras))

@@ -2,9 +2,14 @@ var express = require("express");
 var router = express.Router();
 var models = require("../models");
 
+
+
 router.get("/", (req, res,next) => {
 
-  models.materia.findAll({attributes: ["id","nombre","id_carrera"],
+  models.materia.findAll({
+      limit: req.query.cantidad ? parseInt(req.query.cantidad) : null,
+      offset: req.query.pagina ? parseInt(req.query.pagina) : null,
+      attributes: ["id","nombre","id_carrera"],
       
       /////////se agrega la asociacion 
       include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}]
@@ -12,6 +17,8 @@ router.get("/", (req, res,next) => {
 
     }).then(materias => res.send(materias)).catch(error => { return next(error)});
 });
+
+
 
 
 router.post("/", (req, res) => {
